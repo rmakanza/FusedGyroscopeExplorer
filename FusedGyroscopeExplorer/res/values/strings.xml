@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">FusedGyroscopeExplorer</string>
+    <string name="sensor_label">Sensor</string>
+    <string name="sensor_calibrated_name">GyroscopeFused</string>
+    <string name="sensor_uncalibrated_name">GyroscopeAndroid</string>
+    <string name="action_reset">Reset</string>
+    <string name="label_x_axis">X-Axis:</string>
+    <string name="label_y_axis">Y-Axis:</string>
+    <string name="label_z_axis">Z-Axis:</string>
+    <string name="value_default">0.0</string>
+    <string name="developer_url">KircherElectronics.com</string>
+
+</resources>
