@@ -19,6 +19,8 @@ import java.text.DecimalFormat;
  */
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.view.Menu;

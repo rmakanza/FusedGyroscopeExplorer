@@ -5,7 +5,9 @@ import java.util.ArrayList;
 import org.apache.commons.math3.geometry.euclidean.threed.Rotation;
 import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -119,9 +121,14 @@ public class GyroscopeSensor implements SensorEventListener
 	{
 		if (observersGyroscope.size() == 0)
 		{
-			sensorManager.registerListener(this,
+			boolean enabled = sensorManager.registerListener(this,
 					sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE),
 					SensorManager.SENSOR_DELAY_FASTEST);
+			
+			if(!enabled)
+			{
+				showGyroscopeNotAvailableAlert();
+			}
 		}
 		
 		// Only register the observer if it is not already registered.
@@ -251,5 +258,36 @@ public class GyroscopeSensor implements SensorEventListener
 		{ (float) vOut.getX(), (float) vOut.getY(), (float) vOut.getZ() };
 
 		return rotation;
+	}
+	
+	
+	private void showGyroscopeNotAvailableAlert()
+	{
+		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
+
+		// set title
+		alertDialogBuilder.setTitle("Gyroscope Not Available");
+
+		// set dialog message
+		alertDialogBuilder
+				.setMessage(
+						"Your device is not equipped with a gyroscope or it is not responding...")
+				.setCancelable(false)
+				.setNegativeButton("I'll look around...",
+						new DialogInterface.OnClickListener()
+						{
+							public void onClick(DialogInterface dialog, int id)
+							{
+								// if this button is clicked, just close
+								// the dialog box and do nothing
+								dialog.cancel();
+							}
+						});
+
+		// create alert dialog
+		AlertDialog alertDialog = alertDialogBuilder.create();
+
+		// show it
+		alertDialog.show();
 	}
 }
