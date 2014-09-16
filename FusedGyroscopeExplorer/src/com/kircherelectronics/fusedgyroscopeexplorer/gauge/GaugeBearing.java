@@ -1,4 +1,4 @@
-package com.kircherelectronics.fusedgyroscopeexplorer.gauge.flat;
+package com.kircherelectronics.fusedgyroscopeexplorer.gauge;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -14,8 +14,8 @@ import android.util.Log;
 import android.view.View;
 
 /*
- * Gyroscope Explorer
- * Copyright (C) 2013, Kaleb Kircher - Boki Software, Kircher Engineering, LLC
+ * Fused Gyroscope Explorer
+ * Copyright (C) 2013, Kaleb Kircher - Kircher Engineering, LLC
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,7 +48,7 @@ import android.view.View;
  * @version %I%, %G%
  * @see http://developer.android.com/reference/android/view/SurfaceView.html
  */
-public final class GaugeBearingFlat extends View
+public final class GaugeBearing extends View
 {
 
 	/*
@@ -102,7 +102,7 @@ public final class GaugeBearingFlat extends View
 	 * break a significant number of them, from subtly to significantly.)
 	 */
 
-	private static final String tag = GaugeBearingFlat.class.getSimpleName();
+	private static final String tag = GaugeBearing.class.getSimpleName();
 
 	// drawing tools
 	private RectF rimRect;
@@ -142,14 +142,12 @@ public final class GaugeBearingFlat extends View
 	private float handAcceleration = 0.0f;
 	private long lastHandMoveTime = -1L;
 
-	private int unitsOfMeasure = UnitsOfMeasure.DEGREES;
-
 	/**
 	 * Create a new instance.
 	 * 
 	 * @param context
 	 */
-	public GaugeBearingFlat(Context context)
+	public GaugeBearing(Context context)
 	{
 		super(context);
 		init();
@@ -161,7 +159,7 @@ public final class GaugeBearingFlat extends View
 	 * @param context
 	 * @param attrs
 	 */
-	public GaugeBearingFlat(Context context, AttributeSet attrs)
+	public GaugeBearing(Context context, AttributeSet attrs)
 	{
 		super(context, attrs);
 		init();
@@ -174,20 +172,10 @@ public final class GaugeBearingFlat extends View
 	 * @param attrs
 	 * @param defStyle
 	 */
-	public GaugeBearingFlat(Context context, AttributeSet attrs, int defStyle)
+	public GaugeBearing(Context context, AttributeSet attrs, int defStyle)
 	{
 		super(context, attrs, defStyle);
 		init();
-	}
-
-	public int getUnitsOfMeasure()
-	{
-		return unitsOfMeasure;
-	}
-
-	public void setUnitsOfMeasure(int unitsOfMeasure)
-	{
-		this.unitsOfMeasure = unitsOfMeasure;
 	}
 
 	/**

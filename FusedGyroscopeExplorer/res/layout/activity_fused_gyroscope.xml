@@ -3,13 +3,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".GyroscopeActivity" >
+    android:weightSum="12.5" >
 
     <RelativeLayout
         android:id="@+id/layout_calibrated_header"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="5dp" >
+        android:layout_height="0dp"
+        android:layout_marginTop="5dp"
+        android:layout_weight="0.5" >
 
         <RelativeLayout
             android:layout_width="wrap_content"
@@ -39,7 +40,8 @@
     <RelativeLayout
         android:id="@+id/layout_calibrated_statistics"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
+        android:layout_height="0dp"
+        android:layout_weight="1" >
 
         <RelativeLayout
             android:layout_width="wrap_content"
@@ -143,20 +145,21 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="5dp" >
+        android:layout_height="0dp"
+        android:layout_marginTop="5dp" 
+         android:layout_weight="4.25" >
 
-        <com.kircherelectronics.fusedgyroscopeexplorer.gauge.flat.GaugeBearingFlat
+        <com.kircherelectronics.fusedgyroscopeexplorer.gauge.GaugeBearing
             android:id="@+id/gauge_bearing_calibrated"
-            android:layout_width="140dp"
-            android:layout_height="140dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
             android:layout_marginLeft="20dp" />
 
-        <com.kircherelectronics.fusedgyroscopeexplorer.gauge.flat.GaugeRotationFlat
+        <com.kircherelectronics.fusedgyroscopeexplorer.gauge.GaugeRotation
             android:id="@+id/gauge_tilt_calibrated"
-            android:layout_width="140dp"
-            android:layout_height="140dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_marginRight="20dp" />
     </RelativeLayout>
@@ -164,8 +167,9 @@
     <RelativeLayout
         android:id="@+id/layout_raw_header"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp" >
+        android:layout_height="0dp"
+        android:layout_marginTop="20dp"
+        android:layout_weight="0.5">
 
         <RelativeLayout
             android:layout_width="wrap_content"
@@ -195,7 +199,8 @@
     <RelativeLayout
         android:id="@+id/layout_raw_statistics"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
+        android:layout_height="0dp" 
+        android:layout_weight="1">
 
         <RelativeLayout
             android:layout_width="wrap_content"
@@ -299,27 +304,29 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="5dp" >
+        android:layout_height="0dp"
+        android:layout_marginTop="5dp"
+        android:layout_weight="4.25" >
 
-        <com.kircherelectronics.fusedgyroscopeexplorer.gauge.flat.GaugeBearingFlat
+        <com.kircherelectronics.fusedgyroscopeexplorer.gauge.GaugeBearing
             android:id="@+id/gauge_bearing_raw"
-            android:layout_width="140dp"
-            android:layout_height="140dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
             android:layout_marginLeft="20dp" />
 
-        <com.kircherelectronics.fusedgyroscopeexplorer.gauge.flat.GaugeRotationFlat
+        <com.kircherelectronics.fusedgyroscopeexplorer.gauge.GaugeRotation
             android:id="@+id/gauge_tilt_raw"
-            android:layout_width="140dp"
-            android:layout_height="140dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_marginRight="20dp" />
     </RelativeLayout>
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="fill_parent" >
+        android:layout_height="0dp"
+        android:layout_weight="1" >
 
         <RelativeLayout
             android:layout_width="match_parent"

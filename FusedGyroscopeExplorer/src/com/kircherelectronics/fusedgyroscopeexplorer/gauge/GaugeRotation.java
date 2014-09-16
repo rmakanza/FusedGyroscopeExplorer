@@ -1,9 +1,9 @@
-package com.kircherelectronics.fusedgyroscopeexplorer.gauge.flat;
+package com.kircherelectronics.fusedgyroscopeexplorer.gauge;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.Canvas;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.LinearGradient;
 import android.graphics.Paint;
@@ -11,13 +11,14 @@ import android.graphics.RadialGradient;
 import android.graphics.RectF;
 import android.graphics.Shader;
 import android.graphics.Typeface;
+import android.hardware.SensorManager;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
 
 /*
- * Gyroscope Explorer
- * Copyright (C) 2013, Kaleb Kircher - Boki Software, Kircher Engineering, LLC
+ * Fused Gyroscope Explorer
+ * Copyright (C) 2013, Kaleb Kircher - Kircher Engineering, LLC
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,12 +42,11 @@ import android.view.View;
  * Android 3.0 which won't hog the UI thread like View will. This should only be
  * used with devices or certain libraries that require View.
  * 
- * @author Kaleb, Scott Bannick
+ * @author Kaleb
  * @version %I%, %G%
  * @see http://developer.android.com/reference/android/view/View.html
- * @since Scott Bannick 5/19/2013: Made gui changes.
  */
-public final class GaugeRotationFlat extends View
+public final class GaugeRotation extends View
 {
 
 	/*
@@ -100,7 +100,7 @@ public final class GaugeRotationFlat extends View
 	 * break a significant number of them, from subtly to significantly.)
 	 */
 
-	private static final String TAG = GaugeRotationFlat.class.getSimpleName();
+	private static final String tag = GaugeRotation.class.getSimpleName();
 
 	// drawing tools
 	private RectF rimOuterRect;
@@ -112,11 +112,9 @@ public final class GaugeRotationFlat extends View
 
 	// Keep static bitmaps of the gauge so we only have to redraw if we have to
 	// Static bitmap for the bezel of the gauge
-	private Bitmap bezel;
+	private Bitmap bezelBitmap;
 	// Static bitmap for the face of the gauge
-	private Bitmap face;
-	
-	private Canvas faceCanvas;
+	private Bitmap faceBitmap;
 
 	// Keep track of the rotation of the device
 	private float[] rotation = new float[3];
@@ -162,7 +160,7 @@ public final class GaugeRotationFlat extends View
 	 * 
 	 * @param context
 	 */
-	public GaugeRotationFlat(Context context)
+	public GaugeRotation(Context context)
 	{
 		super(context);
 
@@ -175,7 +173,7 @@ public final class GaugeRotationFlat extends View
 	 * @param context
 	 * @param attrs
 	 */
-	public GaugeRotationFlat(Context context, AttributeSet attrs)
+	public GaugeRotation(Context context, AttributeSet attrs)
 	{
 		super(context, attrs);
 
@@ -189,7 +187,7 @@ public final class GaugeRotationFlat extends View
 	 * @param attrs
 	 * @param defStyle
 	 */
-	public GaugeRotationFlat(Context context, AttributeSet attrs, int defStyle)
+	public GaugeRotation(Context context, AttributeSet attrs, int defStyle)
 	{
 		super(context, attrs, defStyle);
 
@@ -203,7 +201,7 @@ public final class GaugeRotationFlat extends View
 	 */
 	public void updateRotation(float[] rotation)
 	{
-		this.rotation = rotation;
+		System.arraycopy(rotation, 0, this.rotation, 0, rotation.length);
 
 		this.invalidate();
 	}
@@ -279,9 +277,9 @@ public final class GaugeRotationFlat extends View
 
 		// now set to black
 		skyPaint = new Paint();
+		skyPaint.setAntiAlias(true);
 		skyPaint.setFlags(Paint.ANTI_ALIAS_FLAG);
-		skyPaint.setShader(new LinearGradient(0.40f, 0.0f, 0.60f, 1.0f, Color
-				.rgb(0, 0, 0), Color.rgb(0, 0, 0), Shader.TileMode.CLAMP));
+		skyPaint.setColor(Color.WHITE);
 
 		// now set to white
 		earthPaint = new Paint();
@@ -408,80 +406,67 @@ public final class GaugeRotationFlat extends View
 	private void drawFace(Canvas canvas)
 	{
 		// free the old bitmap
-		if (face != null)
+		if (faceBitmap != null)
 		{
-			face.recycle();
+			faceBitmap.recycle();
 		}
 
-		face = Bitmap.createBitmap(getWidth(), getHeight(),
+		faceBitmap = Bitmap.createBitmap(getWidth(), getHeight(),
 				Bitmap.Config.ARGB_8888);
-		faceCanvas = new Canvas(face);
+
+		Canvas faceCanvas = new Canvas(faceBitmap);
 		float scale = (float) getWidth();
 		faceCanvas.scale(scale, scale);
 
-		float rimSize = 0.02f;
+		skyBackgroundRect.set(rimRect.left, rimRect.top, rimRect.right,
+				rimRect.bottom);
 
-		float radius = ((rimRect.left + rimSize) + (rimRect.right - rimSize)) / 2;
+		faceCanvas.drawArc(skyBackgroundRect, 0, 360, true, skyPaint);
 
-		float aPos = rotation[1];
+		int[] allpixels = new int[faceBitmap.getHeight()
+				* faceBitmap.getWidth()];
 
-		if (aPos < 0)
+		faceBitmap.getPixels(allpixels, 0, faceBitmap.getWidth(), 0, 0,
+				faceBitmap.getWidth(), faceBitmap.getHeight());
+
+		for (int i = 0; i < faceBitmap.getHeight() * faceBitmap.getWidth(); i++)
 		{
-			aPos = 0;
+			allpixels[i] = Color.TRANSPARENT;
 		}
 
-		float aNeg = rotation[1];
+		int height = (int) ((faceBitmap.getHeight() / 2) - ((faceBitmap
+				.getHeight() / 2.5) * rotation[1]));
 
-		if (aNeg > 0)
+		if (height > faceBitmap.getHeight())
 		{
-			aNeg = 0;
+			height = faceBitmap.getHeight();
 		}
 
-		float radiusSquaredNeg = (float) Math.pow(radius, 2);
+		faceBitmap.setPixels(allpixels, 0, faceBitmap.getWidth(), 0, 0,
+				faceBitmap.getWidth(), height);
 
-		float aSquaredNeg = (float) Math.pow(aNeg, 2);
+		float x = -rotation[2];
 
-		float bNeg = (float) Math.sqrt(radiusSquaredNeg - aSquaredNeg);
-
-		float radiusSquaredPos = (float) Math.pow(radius, 2);
-
-		float aSquaredPos = (float) Math.pow(aPos, 2);
-
-		float bPos = (float) Math.sqrt(radiusSquaredPos - aSquaredPos);
-
-		skyBackgroundRect.set(rimRect.left + rimSize, rimRect.top + rimSize,
-				rimRect.right - rimSize, rimRect.bottom - rimSize);
-
-		if (aPos == 0)
+		// Restrict x between 1 and -1
+		if (x > 1)
 		{
-			faceCanvas.drawArc(skyBackgroundRect,
-					(float) (0 + (rotation[2] * (180 / Math.PI))), 360, true,
-					skyPaint);
+			x = 1;
 		}
-		if (aNeg== 0)
+		if (x < -1)
 		{
-			faceCanvas.drawArc(skyBackgroundRect,
-					(float) (0 + (rotation[2] * (180 / Math.PI))), 360, true,
-					earthPaint);
+			x = -1;
 		}
 
-		skyRect.set((rimRect.left + rimSize) + (radius - bPos) / 2, rimRect.top
-				+ rimSize, (rimRect.right - rimSize) - (radius - bPos) / 2,
-				(rimRect.bottom - rimSize) - (aPos));
+		// Calculate the rotation angle from
+		// http://www.st.com/web/en/resource/technical/document/application_note/CD00268887.pdf
+		float angle = (float) (Math.asin(x) * 57.2957795);
 
-		faceCanvas.drawArc(skyRect,
-				(float) (0 + (rotation[2] * (180 / Math.PI))), -180, true,
-				skyPaint);
+		canvas.save(Canvas.MATRIX_SAVE_FLAG);
+		canvas.rotate(-angle, faceBitmap.getWidth() / 2f,
+				faceBitmap.getHeight() / 2f);
 
-		earthRect.set((rimRect.left + rimSize) + (radius - bNeg) / 2,
-				(rimRect.top + rimSize) - (aNeg), (rimRect.right - rimSize)
-						- (radius - bNeg) / 2, rimRect.bottom - rimSize);
-
-		faceCanvas.drawArc(earthRect,
-				(float) (0 + (rotation[2] * (180 / Math.PI))), 180, true,
-				earthPaint);
-
-		canvas.drawBitmap(face, 0, 0, backgroundPaint);
+		canvas.drawBitmap(faceBitmap, 0, 0, backgroundPaint);
+		canvas.restore();
 	}
 
 	/**
@@ -491,20 +476,20 @@ public final class GaugeRotationFlat extends View
 	 */
 	private void drawBezel(Canvas canvas)
 	{
-		if (bezel == null)
+		if (bezelBitmap == null)
 		{
-			Log.w(TAG, "Bezel not created");
+			Log.w(tag, "Bezel not created");
 		}
 		else
 		{
-			canvas.drawBitmap(bezel, 0, 0, backgroundPaint);
+			canvas.drawBitmap(bezelBitmap, 0, 0, backgroundPaint);
 		}
 	}
 
 	@Override
 	protected void onSizeChanged(int w, int h, int oldw, int oldh)
 	{
-		Log.d(TAG, "Size changed to " + w + "x" + h);
+		Log.d(tag, "Size changed to " + w + "x" + h);
 
 		regenerateBezel();
 	}
@@ -517,14 +502,14 @@ public final class GaugeRotationFlat extends View
 	private void regenerateBezel()
 	{
 		// free the old bitmap
-		if (bezel != null)
+		if (bezelBitmap != null)
 		{
-			bezel.recycle();
+			bezelBitmap.recycle();
 		}
 
-		bezel = Bitmap.createBitmap(getWidth(), getHeight(),
+		bezelBitmap = Bitmap.createBitmap(getWidth(), getHeight(),
 				Bitmap.Config.ARGB_8888);
-		Canvas bezelCanvas = new Canvas(bezel);
+		Canvas bezelCanvas = new Canvas(bezelBitmap);
 		float scale = (float) getWidth();
 		bezelCanvas.scale(scale, scale);
 
@@ -536,6 +521,10 @@ public final class GaugeRotationFlat extends View
 	{
 		drawBezel(canvas);
 		drawFace(canvas);
+
+		float scale = (float) getWidth();
+		canvas.save(Canvas.MATRIX_SAVE_FLAG);
+		canvas.scale(scale, scale);
 
 		canvas.restore();
 	}

@@ -18,6 +18,7 @@ import java.text.DecimalFormat;
  * limitations under the License.
  */
 
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -28,8 +29,8 @@ import android.view.MenuItem;
 import android.widget.TextView;
 
 import com.kircherelectronics.fusedgyroscopeexplorer.filter.MeanFilter;
-import com.kircherelectronics.fusedgyroscopeexplorer.gauge.flat.GaugeBearingFlat;
-import com.kircherelectronics.fusedgyroscopeexplorer.gauge.flat.GaugeRotationFlat;
+import com.kircherelectronics.fusedgyroscopeexplorer.gauge.GaugeBearing;
+import com.kircherelectronics.fusedgyroscopeexplorer.gauge.GaugeRotation;
 import com.kircherelectronics.fusedgyroscopeexplorer.sensor.FusedGyroscopeSensor;
 import com.kircherelectronics.fusedgyroscopeexplorer.sensor.GravitySensor;
 import com.kircherelectronics.fusedgyroscopeexplorer.sensor.GyroscopeSensor;
@@ -38,6 +39,24 @@ import com.kircherelectronics.fusedgyroscopeexplorer.sensor.observer.FusedGyrosc
 import com.kircherelectronics.fusedgyroscopeexplorer.sensor.observer.GravitySensorObserver;
 import com.kircherelectronics.fusedgyroscopeexplorer.sensor.observer.GyroscopeSensorObserver;
 import com.kircherelectronics.fusedgyroscopeexplorer.sensor.observer.MagneticSensorObserver;
+
+/*
+ * Fused Gyroscope Explorer
+ * Copyright (C) 2013, Kaleb Kircher - Kircher Engineering, LLC
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
 /**
  * Determines the rotation of the device using the Android gyroscope as well as
@@ -56,6 +75,7 @@ public class FusedGyroscopeActivity extends Activity implements
 
 	private static final String tag = FusedGyroscopeActivity.class
 			.getSimpleName();
+	
 	private static final float NS2S = 1.0f / 1000000000.0f;
 	private static final int MEAN_FILTER_WINDOW = 10;
 	private static final int MIN_SAMPLE_COUNT = 30;
@@ -65,10 +85,10 @@ public class FusedGyroscopeActivity extends Activity implements
 
 	// The gauge views. Note that these are views and UI hogs since they run in
 	// the UI thread, not ideal, but easy to use.
-	private GaugeBearingFlat gaugeBearingFused;
-	private GaugeBearingFlat gaugeBearingAndroid;
-	private GaugeRotationFlat gaugeTiltFused;
-	private GaugeRotationFlat gaugeTiltAndroid;
+	private GaugeBearing gaugeBearingFused;
+	private GaugeBearing gaugeBearingAndroid;
+	private GaugeRotation gaugeTiltFused;
+	private GaugeRotation gaugeTiltAndroid;
 
 	private DecimalFormat df;
 
@@ -373,12 +393,12 @@ public class FusedGyroscopeActivity extends Activity implements
 		zAxisFused = (TextView) this.findViewById(R.id.value_z_axis_calibrated);
 
 		// Initialize the raw (uncalibrated) gauge views
-		gaugeBearingAndroid = (GaugeBearingFlat) findViewById(R.id.gauge_bearing_raw);
-		gaugeTiltAndroid = (GaugeRotationFlat) findViewById(R.id.gauge_tilt_raw);
+		gaugeBearingAndroid = (GaugeBearing) findViewById(R.id.gauge_bearing_raw);
+		gaugeTiltAndroid = (GaugeRotation) findViewById(R.id.gauge_tilt_raw);
 
 		// Initialize the calibrated gauges views
-		gaugeBearingFused = (GaugeBearingFlat) findViewById(R.id.gauge_bearing_calibrated);
-		gaugeTiltFused = (GaugeRotationFlat) findViewById(R.id.gauge_tilt_calibrated);
+		gaugeBearingFused = (GaugeBearing) findViewById(R.id.gauge_bearing_calibrated);
+		gaugeTiltFused = (GaugeRotation) findViewById(R.id.gauge_tilt_calibrated);
 	}
 
 	/**
